@@ -21,4 +21,6 @@ trainData <- trainData[,dcols]
 testData <- testData[,dcols]
 cvData <- cvData[,dcols]
 
-clf <- train(trainData, y = yTrain, method="rf")
+
+#clf <- train(trainData, y = yTrain, method="rf")
+clf <- load(clf-rf.RData)
