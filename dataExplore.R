@@ -26,7 +26,7 @@ cvData <- cvData[,dcols]
 #load("clf-rf.RData") #should load as clf
 load("etc.RData")
 
-pred <- predict(clf, testData)
+pred <- predict(etc, testData)
 
 cm <- confusionMatrix(table(pred, yTest))
 
