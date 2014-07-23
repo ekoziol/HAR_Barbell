@@ -69,8 +69,13 @@ cvData <- cvData[,dcols]
 Due to its historic success in prediction accuracy in low dimensional space, a random forest classifier was initially selected in order to predict the five classes.  While the approach is a bit of a black box and hard to interpret, the author's main goal was prediction accuracy.  The author believed that the prediction accuracy could be improved and thus switched to an Extra Trees Classifier, which is an even more randomized random forest.  The classifier was trained with the following code:
 
 ```{r, echo=FALSE, cache=FALSE, results='hide'}
+<<<<<<< HEAD
 load("clf-rf.RData")
 pred <- predict(clf, testData)
+=======
+load("etc.RData")
+pred <- predict(etc, testData)
+>>>>>>> FETCH_HEAD
 ```
 
 ```{r, results='hide', eval=FALSE}
