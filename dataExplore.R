@@ -11,11 +11,10 @@ testData <- harData[-inTrain,]
 
 cvData <- read.csv("Data/pml-testing.csv")
 
-dcols <- names(cvData)[grepl(pred"^gyros|^roll|^pitch|^yaw|^accel", names(cvData))]
+dcols <- names(cvData)[grepl("^gyros|^roll|^pitch|^yaw|^accel", names(cvData))]
 
 yTrain <- trainData[,"classe"]
 yTest <- testData[,"classe"]
-
 
 trainData <- trainData[,dcols]
 testData <- testData[,dcols]
@@ -24,11 +23,12 @@ cvData <- cvData[,dcols]
 
 #clf <- train(trainData, y = yTrain, method="rf")
 #clf <- save(clf, file = "clf-rf.RData)
-clf <- load("clf-rf.RData")
+#load("clf-rf.RData") #should load as clf
+load("etc.RData")
 
 pred <- predict(clf, testData)
 
-confusionMatrix(table(pred, yTest))
+cm <- confusionMatrix(table(pred, yTest))
 
 
 pml_write_files = function(x){
@@ -38,4 +38,4 @@ pml_write_files = function(x){
         write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
     }
 }
-pml_write_files(answers)
+#pml_write_files(answers)
