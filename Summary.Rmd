@@ -2,7 +2,7 @@
 ## Eric Koziol
 
 ### Summary
-This investigation attempts to predict the if a subject is performing a dumbell exercise correctly or incorrectly.  Incorrect performance of the exercise was broken down into a total of four different types, for a total of five categorical classification classes.  Using random forest techniques, the author was able to obtain a prediction accuracy of 99.7%.
+This investigation attempts to predict the if a subject is performing a dumbell exercise correctly or incorrectly.  Incorrect performance of the exercise was broken down into a total of four different types, for a total of five categorical classification classes.  Using a random forest variant (Extra Trees), the author was able to obtain a prediction accuracy of 99.7%.
 
 ### Goal
 The goal of this prediction investigation is to predict how well a subject is performing a barbell exercise.  The categories of correctness of exercise are broken down as follows:
@@ -69,7 +69,8 @@ cvData <- cvData[,dcols]
 Due to its historic success in prediction accuracy in low dimensional space, a random forest classifier was initially selected in order to predict the five classes.  While the approach is a bit of a black box and hard to interpret, the author's main goal was prediction accuracy.  The author believed that the prediction accuracy could be improved and thus switched to an Extra Trees Classifier, which is an even more randomized random forest.  The classifier was trained with the following code:
 
 ```{r, echo=FALSE, cache=FALSE, results='hide'}
-etc <- load("etc.Rmd")
+load("etc.RData")
+etc
 pred <- predict(etc, testData)
 ```
 
