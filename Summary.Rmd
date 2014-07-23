@@ -2,7 +2,7 @@
 ## Eric Koziol
 
 ### Summary
-This investigation attempts to predict the if a subject is performing a dumbell exercise correctly or incorrectly.  Incorrect performance of the exercise was broken down into a total of four different types, for a total of five categorical classification classes.  Using a random forest variant (Extra Trees), the author was able to obtain a prediction accuracy of 99.7%.
+This investigation attempts to predict the if a subject is performing a dumbell exercise correctly or incorrectly.  Incorrect performance of the exercise was broken down into a total of four different types, for a total of five categorical classification classes.  Using a random forest model, the author was able to obtain a prediction accuracy of 99.6%.
 
 ### Goal
 The goal of this prediction investigation is to predict how well a subject is performing a barbell exercise.  The categories of correctness of exercise are broken down as follows:
@@ -29,7 +29,7 @@ The methodology below was used in predicting each of the five categories of exer
 
 The data was first imported, a random seed was set and the training data was split up into a training set and a test validation set.  The training set used 75% of the training data in order to give an adequate amount of data to the model but still leave enough data for the testing set to validate the model. The a cross-validation set with unknown classes was also loaded in order to test the model against unknown classes.
 
-```{r, results='hide', cache=TRUE}
+```{r, results='hide'}
 library(caret)
 library(kernlab)
 set.seed(42)
@@ -69,19 +69,18 @@ cvData <- cvData[,dcols]
 Due to its historic success in prediction accuracy in low dimensional space, a random forest classifier was initially selected in order to predict the five classes.  While the approach is a bit of a black box and hard to interpret, the author's main goal was prediction accuracy.  The author believed that the prediction accuracy could be improved and thus switched to an Extra Trees Classifier, which is an even more randomized random forest.  The classifier was trained with the following code:
 
 ```{r, echo=FALSE, cache=FALSE, results='hide'}
-load("etc.RData")
-etc
-pred <- predict(etc, testData)
+load("clf-rf.RData")
+pred <- predict(clf, testData)
 ```
 
 ```{r, results='hide', eval=FALSE}
-etc <- train(trainData, y = yTrain, method="rf")
+clf <- train(trainData, y = yTrain, method="rf")
 
-pred <- predict(etc, testData)
+pred <- predict(clf, testData)
 ```
 
 ### Results
-After training the Extra Trees Classifier, the model was used to predict the values for the test set.  The predicted values versus the actual values were then evaluated with a confusion matrix.
+After training the Random Forest Classifier, the model was used to predict the values for the test set.  The predicted values versus the actual values were then evaluated with a confusion matrix.
 
 ```{r}
 table(pred, yTest)
@@ -91,14 +90,13 @@ cm
 
 
 ### Discussion
-```{r, echo=FALSE}
+```{r}
 acc <- cm$overall[1]
 ```
 
-This model is very promising as the overall accuracy is 
-### **`r acc`** 
+This model is very promising as the overall accuracy is **`r acc`**.
 
-which leads to an out of sample error of `r 1-acc`.
+which leads to an out of sample error of **`r 1-acc`**.
 
 
-It appears that the Extra Trees Classifier was quite a good choice and showcases the prediction ability of random forest type models.  This model worked very well without much exploratory data analysis or feature engineering.
+It appears that the Random Forest Classifier was quite a good choice and showcases the prediction ability of random forest type models.  This model worked very well without much exploratory data analysis or feature engineering.

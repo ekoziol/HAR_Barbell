@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="x-ua-compatible" content="IE=9" >
 
-<title>Predicting Quality of Weight Lifting from Sensors</title>
+<title>Predicting Quality of Weight Lifting from Activity Monitoring Sensors</title>
 
 <style type="text/css">
 body, td {
@@ -179,13 +179,13 @@ hljs.initHighlightingOnLoad();
 </head>
 
 <body>
-<h1>Predicting Quality of Weight Lifting from Sensors</h1>
+<h1>Predicting Quality of Weight Lifting from Activity Monitoring Sensors</h1>
 
 <h2>Eric Koziol</h2>
 
 <h3>Summary</h3>
 
-<p>This investigation attempts to predict the if a subject is performing a dumbell exercise correctly or incorrectly.  Incorrect performance of the exercise was broken down into a total of four different types, for a total of five categorical classification classes.  Using random forest techniques, the author was able to obtain a prediction accuracy of 99.7%.</p>
+<p>This investigation attempts to predict the if a subject is performing a dumbell exercise correctly or incorrectly.  Incorrect performance of the exercise was broken down into a total of four different types, for a total of five categorical classification classes.  Using a random forest model, the author was able to obtain a prediction accuracy of 99.6%.</p>
 
 <h3>Goal</h3>
 
@@ -216,20 +216,12 @@ hljs.initHighlightingOnLoad();
 <pre><code class="r">library(caret)
 </code></pre>
 
-<pre><code>## Warning: package &#39;caret&#39; was built under R version 3.1.1
-</code></pre>
-
 <pre><code>## Loading required package: lattice
 ## Loading required package: ggplot2
 </code></pre>
 
 <pre><code class="r">library(kernlab)
-</code></pre>
-
-<pre><code>## Warning: package &#39;kernlab&#39; was built under R version 3.1.1
-</code></pre>
-
-<pre><code class="r">set.seed(42)
+set.seed(42)
 
 harData &lt;- read.csv(&quot;Data/pml-training.csv&quot;)
 
@@ -241,7 +233,7 @@ testData &lt;- harData[-inTrain,]
 cvData &lt;- read.csv(&quot;Data/pml-testing.csv&quot;)
 </code></pre>
 
-<p>After performing a tabular review of the data, it was noticed that a large number of columns contained NA values.  Therefore, the author decided to strictly use sensor data which was defined as any column with a name beginning with &ldquo;gyros&rdquo;, &ldquo;roll&rdquo;, &ldquo;yaw&rdquo; or &ldquo;accel&rdquo;.  This resulted in a total of 36 being used for the prediction model.  The columns used were as follows:</p>
+<p>After performing a tabular review of the data, it was noticed that a large number of columns contained NA values.  Therefore, the author decided to strictly use sensor data which was defined as any column with a name beginning with &ldquo;gyros&rdquo;, &ldquo;roll&rdquo;, &ldquo;yaw&rdquo; or &ldquo;accel&rdquo;.  This resulted in a total of <strong>36</strong> features being used for the prediction model.  The training, test and cross validation sets were then stripped down to only include the columns of interest.  The columns used were as follows:</p>
 
 <p>roll_belt, pitch_belt, yaw_belt, gyros_belt_x, gyros_belt_y, gyros_belt_z, accel_belt_x, accel_belt_y, accel_belt_z, roll_arm, pitch_arm, yaw_arm, gyros_arm_x, gyros_arm_y, gyros_arm_z, accel_arm_x, accel_arm_y, accel_arm_z, roll_dumbbell, pitch_dumbbell, yaw_dumbbell, gyros_dumbbell_x, gyros_dumbbell_y, gyros_dumbbell_z, accel_dumbbell_x, accel_dumbbell_y, accel_dumbbell_z, roll_forearm, pitch_forearm, yaw_forearm, gyros_forearm_x, gyros_forearm_y, gyros_forearm_z, accel_forearm_x, accel_forearm_y, accel_forearm_z</p>
 
@@ -255,11 +247,81 @@ testData &lt;- testData[,dcols]
 cvData &lt;- cvData[,dcols]
 </code></pre>
 
+<p>Due to its historic success in prediction accuracy in low dimensional space, a random forest classifier was initially selected in order to predict the five classes.  While the approach is a bit of a black box and hard to interpret, the author&#39;s main goal was prediction accuracy.  The author believed that the prediction accuracy could be improved and thus switched to an Extra Trees Classifier, which is an even more randomized random forest.  The classifier was trained with the following code:</p>
+
+<pre><code>## Loading required package: randomForest
+## randomForest 4.6-7
+## Type rfNews() to see new features/changes/bug fixes.
+</code></pre>
+
+<pre><code class="r">clf &lt;- train(trainData, y = yTrain, method=&quot;rf&quot;)
+
+pred &lt;- predict(clf, testData)
+</code></pre>
+
 <h3>Results</h3>
+
+<p>After training the Random Forest Classifier, the model was used to predict the values for the test set.  The predicted values versus the actual values were then evaluated with a confusion matrix.</p>
+
+<pre><code class="r">table(pred, yTest)
+</code></pre>
+
+<pre><code>##     yTest
+## pred    A    B    C    D    E
+##    A 1394    5    0    0    0
+##    B    0  944    3    0    0
+##    C    1    0  850    9    0
+##    D    0    0    2  795    1
+##    E    0    0    0    0  900
+</code></pre>
+
+<pre><code class="r">cm &lt;- confusionMatrix(table(pred, yTest))
+cm
+</code></pre>
+
+<pre><code>## Confusion Matrix and Statistics
+## 
+##     yTest
+## pred    A    B    C    D    E
+##    A 1394    5    0    0    0
+##    B    0  944    3    0    0
+##    C    1    0  850    9    0
+##    D    0    0    2  795    1
+##    E    0    0    0    0  900
+## 
+## Overall Statistics
+##                                         
+##                Accuracy : 0.996         
+##                  95% CI : (0.993, 0.997)
+##     No Information Rate : 0.284         
+##     P-Value [Acc &gt; NIR] : &lt;2e-16        
+##                                         
+##                   Kappa : 0.995         
+##  Mcnemar&#39;s Test P-Value : NA            
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity             0.999    0.995    0.994    0.989    0.999
+## Specificity             0.999    0.999    0.998    0.999    1.000
+## Pos Pred Value          0.996    0.997    0.988    0.996    1.000
+## Neg Pred Value          1.000    0.999    0.999    0.998    1.000
+## Prevalence              0.284    0.194    0.174    0.164    0.184
+## Detection Rate          0.284    0.192    0.173    0.162    0.184
+## Detection Prevalence    0.285    0.193    0.175    0.163    0.184
+## Balanced Accuracy       0.999    0.997    0.996    0.994    0.999
+</code></pre>
 
 <h3>Discussion</h3>
 
-<h3>Conclusion</h3>
+<pre><code class="r">acc &lt;- cm$overall[1]
+</code></pre>
+
+<p>This model is very promising as the overall accuracy is <strong>0.9957</strong>.</p>
+
+<p>which leads to an out of sample error of <strong>0.0043</strong>.</p>
+
+<p>It appears that the Random Forest Classifier was quite a good choice and showcases the prediction ability of random forest type models.  This model worked very well without much exploratory data analysis or feature engineering.</p>
 
 </body>
 

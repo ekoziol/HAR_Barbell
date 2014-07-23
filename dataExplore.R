@@ -24,9 +24,9 @@ cvData <- cvData[,dcols]
 #clf <- train(trainData, y = yTrain, method="rf")
 #clf <- save(clf, file = "clf-rf.RData)
 #load("clf-rf.RData") #should load as clf
-load("etc.RData")
+load("clf-rf.RData")
 
-pred <- predict(etc, testData)
+pred <- predict(clf, testData)
 
 cm <- confusionMatrix(table(pred, yTest))
 
