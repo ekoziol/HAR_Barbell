@@ -70,7 +70,6 @@ Due to its historic success in prediction accuracy in low dimensional space, a r
 
 ```{r, echo=FALSE, cache=FALSE, results='hide'}
 load("etc.RData")
-etc
 pred <- predict(etc, testData)
 ```
 
